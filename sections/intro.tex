@@ -1,90 +1,134 @@
 %{\setbeamercolor{background canvas}{bg=felix_bg}
 \begin{frame}[t]
-	\frametitle{Outline}
-	\begin{enumerate}
-		\item Introduction to evolving graphs
-		\item Introduction to the inverse problem\footnote{Grindrod Peter and Higham Desmond J. 2010, Evolving graphs: dynamical models, inverse problems and propagation}
-		\item My approach and results
-	\end{enumerate}
+	\frametitle{Nearest Neighbor Search (NNS)}
+		Can we find the database row closest to some query?
+		\onslide<2-3> {
+			\begin{itemize}
+				\item Input: $S = \{v_1, \dots, v_N\} \subset \mathbb{R}^D$, $q \in \mathbb{R}^d$
+				\item Question: Find $v \in S$ s.t. dist$(v, q)$ is minimized
+			\end{itemize}
+		}
+		\vspace{5.0em}
+		Real-world interest in NNS
+		\onslide<3> {
+			\begin{itemize}
+				\item Used in information retrieval, recommendation systems, non-parametric machine learning, language modeling
+				\item Scalability to large systems is a major concern
+				\item Used very frequently as a subroutine, so any small speedup matters
+			\end{itemize}
+		}
+\end{frame}
 
-	
+\begin{frame}[t]
+	\frametitle{Historical Methods for Solving NNS}
+	Issues to think about:
+		\onslide<2-3> {
+			\begin{itemize}
+				\item What point should we start at?
+				\item How do we split the search space?
+				\item How do we deal with local minima?
+			\end{itemize}
+		}
+		\vspace{5.0em}
+		Common approaches:
+		\onslide<3> {
+			\begin{itemize}
+				\item Partition Trees
+				\item Locality-sensitive hashing
+				\item Similarity Graphs
+			\end{itemize}
+		}
+\end{frame}
+
+\begin{frame}[t]
+	\frametitle{Similarity Graphs}
+	For each $v \in S$, create a vertex in $G$.
+	Each vertex has $k$ neighbors, who are the $k$ nearest points to $v$ in $S$.
+
+	\vspace{3.0em}
+	\onslide<2> {
+		Naive Approach: Greedy search\\
+		To find $v$ closest to $q$, greedily search the similarity graph.\\
+		Jump to $u \in N(v)$ that minimizes dist$(u,q)$.\\
+		Problem: very easy to get stuck within local minima.
+	}
 \end{frame}
 
 
-\begin{frame}[t]
-	\frametitle{Graphs}
-    \begin{center}
-		\resizebox{\textwidth}{!}{
-			\input{figures/graph_example.tikz}
-		}
-	\end{center}
+% \begin{frame}[t]
+% 	\frametitle{Graphs}
+%     \begin{center}
+% 		\resizebox{\textwidth}{!}{
+% 			\input{figures/graph_example.tikz}
+% 		}
+% 	\end{center}
 
-	\onslide<2-4>{
-		{\large \edittext{Vertex: Someone/something with connections.}}
+% 	\onslide<2-4>{
+% 		{\large \edittext{Vertex: Someone/something with connections.}}
 		
-	}
-	\vspace{.7em}
+% 	}
+% 	\vspace{.7em}
 
-	\onslide<3-4>{
-		{\large \lifttext{Edge: A connection between two vertices.}}
-	}
-	\vspace{.7em}
+% 	\onslide<3-4>{
+% 		{\large \lifttext{Edge: A connection between two vertices.}}
+% 	}
+% 	\vspace{.7em}
 
-	\onslide<4>{
-		Examples: Social media, airport network, the internet
-	}
+% 	\onslide<4>{
+% 		Examples: Social media, airport network, the internet
+% 	}
 
-\end{frame}
+% \end{frame}
 
-\begin{frame}[t]
-	\frametitle{Evolving Graphs}
+% \begin{frame}[t]
+% 	\frametitle{Evolving Graphs}
 
-	\begin{center}
-		\resizebox{\textwidth}{!}{
-			\input{figures/evolving_graph.tikz}
-		}
-	\end{center}
+% 	\begin{center}
+% 		\resizebox{\textwidth}{!}{
+% 			\input{figures/evolving_graph.tikz}
+% 		}
+% 	\end{center}
 
-	\onslide<5>{
-		We assign each edge two probabilities:
-		\vspace{1.0em}
+% 	\onslide<5>{
+% 		We assign each edge two probabilities:
+% 		\vspace{1.0em}
 
-		\addtext{Birth Rate:} $\hat{\alpha}(e)$, the probability that the edge will appear.
-		\vspace{1.0em}
+% 		\addtext{Birth Rate:} $\hat{\alpha}(e)$, the probability that the edge will appear.
+% 		\vspace{1.0em}
 
-		\removetext{Death Rate:} $\hat{\omega}(e)$, the probability that the edge will disappear.
-	}
-\end{frame}
+% 		\removetext{Death Rate:} $\hat{\omega}(e)$, the probability that the edge will disappear.
+% 	}
+% \end{frame}
 
-\begin{frame}[t]
-	\frametitle{Range-Dependent Graphs}
+% \begin{frame}[t]
+% 	\frametitle{Range-Dependent Graphs}
 
-	Suppose some assignment of the integers ${1...n}$\\
-	%\vspace{1.0em}
-	$i_v$ = the integer assigned to vertex $v$
+% 	Suppose some assignment of the integers ${1...n}$\\
+% 	%\vspace{1.0em}
+% 	$i_v$ = the integer assigned to vertex $v$
 	
-	\onslide<2-4>{
-		\vspace{1.0em}
-		Range: An edge (u, v) has range $|i_u - i_v|$
-		\vspace{1.0em}
-	}
+% 	\onslide<2-4>{
+% 		\vspace{1.0em}
+% 		Range: An edge (u, v) has range $|i_u - i_v|$
+% 		\vspace{1.0em}
+% 	}
 
-	\onslide<3-4>{
-		We can define birth rates and death rates as a function of range:
-		\vspace{0.5em}
-		$\hat{\alpha}(e) = \alpha(|i_u - i_v|)$\\
-		$\hat{\omega}(e) = \omega(|i_u - i_v|)$
-	}
+% 	\onslide<3-4>{
+% 		We can define birth rates and death rates as a function of range:
+% 		\vspace{0.5em}
+% 		$\hat{\alpha}(e) = \alpha(|i_u - i_v|)$\\
+% 		$\hat{\omega}(e) = \omega(|i_u - i_v|)$
+% 	}
 
-	\begin{center}
-		\resizebox{\textwidth}{!}{
-			\input{figures/path.tikz}
-		}
-	\end{center}
+% 	\begin{center}
+% 		\resizebox{\textwidth}{!}{
+% 			\input{figures/path.tikz}
+% 		}
+% 	\end{center}
 
-	\onslide<4>{
-		Range of (v1, v4) = $|1-4| = 3$\\
-		Range of (v2, v3) = $|2-3| = 1$
-	}
+% 	\onslide<4>{
+% 		Range of (v1, v4) = $|1-4| = 3$\\
+% 		Range of (v2, v3) = $|2-3| = 1$
+% 	}
 
-\end{frame}
+% \end{frame}

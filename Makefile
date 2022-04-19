@@ -2,8 +2,16 @@
 default: compile clean
 
 compile:
-	pdflatex dagstuhl.tex
-	pdflatex dagstuhl.tex
+	pdflatex presentation.tex
+	pdflatex presentation.tex
 
 clean:
-	rm -f *.{aux,out,log,snm,toc,nav}
+	@rm -f *.aux
+	@rm -f *.bbl
+	@rm -f *.blg
+	@rm -f *.log
+	@rm -f *.out
+	@rm -f *.vtc
+	@rm -f *.toc
+	@rm -f *.snm
+	@rm -f *.nav
